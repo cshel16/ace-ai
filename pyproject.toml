@@ -6,5 +6,12 @@ build-backend = "setuptools.build_meta"
 name = "ace-ai"
 version = "0.0.1"
 dependencies = [
-    "pybaseball>=2.2.7"
+    "pybaseball>=2.2.7",
+    "pandas"
 ]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-dir]
+ace-ai = "src/ace_ai"
