@@ -7,7 +7,9 @@ name = "ace-ai"
 version = "0.0.1"
 dependencies = [
     "pybaseball>=2.2.7",
-    "pandas"
+    "pandas",
+    "dotenv",
+    "anthropic"
 ]
 
 [tool.setuptools.packages.find]
