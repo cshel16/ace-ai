@@ -1,5 +1,6 @@
 import anthropic
 import logging
+import json
 from dotenv import load_dotenv
 from .tools import Tools
 
@@ -13,27 +14,43 @@ class Client:
         load_dotenv()
         self.client = anthropic.Anthropic()
         self.tools = tools
+        self.conversation = []
 
-    def send_message(self, content):
+    def add_message(self, role, content):
+        message = {
+            "role": role,
+            "content": content,
+        }
+        self.conversation.append(message)
+
+    def send_message(self):
         return self.client.messages.create(
             model="claude-sonnet-4-5-20250929",
             max_tokens=1000,
             tools=self.tools.tools,
-            messages=[
-                {
-                    "role": "user",
-                    "content": content,
-                }
-            ],
+            messages=self.conversation
         )
 
     def send_user_query(self, user_query):
-        message = self.send_message(user_query)
+        self.add_message("user", user_query)
+        message = self.send_message()
         logging.debug(message)
-        return self.process_response(message)
+        self.process_response(message)
+    
+    def build_tool_result_block(self, block, response):
+        return [
+            {
+                "type": "tool_result",
+                "tool_use_id": block.id,
+                "content": json.dumps(response)
+            }
+        ]
 
     def process_response(self, message):
-        response = None
+        if message.stop_reason != "tool_use":
+            print(message.content[0].text)
+            return
+        self.add_message("assistant", message.content)
         for block in message.content:
             if block.type == "text":
                 print(block.text)
@@ -41,8 +58,12 @@ class Client:
                 if block.name == "get_player_id":
                     logging.debug(block)
                     response = self.call_get_player_id(block.input)
-        return response
+                    response_block = self.build_tool_result_block(block, response)
+                    break
+        self.add_message("user", response_block)
+        response = self.send_message()
+        self.process_response(response)
+        
 
     def call_get_player_id(self, input):
-        response = self.tools.get_player_id(input["last_name"], input["first_name"])
-        return response
+        return self.tools.get_player_id(input["last_name"], input["first_name"])
