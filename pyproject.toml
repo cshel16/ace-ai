@@ -9,7 +9,8 @@ dependencies = [
     "pybaseball>=2.2.7",
     "pandas",
     "dotenv",
-    "anthropic"
+    "anthropic",
+    "logging"
 ]
 
 [tool.setuptools.packages.find]
