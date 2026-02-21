@@ -23,8 +23,73 @@ class Tools:
                     },
                     "required": ["last_name", "first_name"]
                 }
+            },
+            {
+                "name": "get_pitcher_statcast",
+                "description": "Using a player's MLBAM ID, get the statcast data for every individual pitch thrown over a specific time frame. This tool returns a list of dictionaries, where each list item is a pitch. This tool can filter on start and end date, pitch type, and specific columns or metrics. This tool is primarly used for individual pitch statcast analysis. Statcast data didn't become available until the 2008 season.",
+                "input_schema": {
+                    "type": "object",
+                    "properties": {
+                        "player_id": {
+                            "type": "integer",
+                            "description": "The MLBAM ID associated with the player"
+                        },
+                        "start": {
+                            "type": "string",
+                            "description": "The start date (inclusive) to collect data for. Format is YYYY-MM-dd. If omitted, defaults to yesterday."
+                        },
+                        "end": {
+                            "type": "string",
+                            "description": "The end date (inclusive) to collect data for. Format is YYYY-MM-dd. If omitted, the query will return a single day of data."
+                        },
+                        "pitch_type": {
+                            "type": "string",
+                            "description": "The official Statcast pitch type code to filter the result by. If omitted, the result will include all pitch types."
+                        },
+                        "columns": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "description": "The Statcast pitch-level dataset columns to keep in the result. This needs to be a list of strings where each string is exactly the column name to keep. If omitted, will keep all columns for analysis. This is helpful for filtering columns when you know we only care about a certain metric, like release_speed."
+                        }
+
+                    },
+                    "required": ["player_id"]
+                }
+            },
+            {
+                "name": "get_player_splits",
+                "description": "Using a player's FanGraphs ID, retrieve split stats for a player. Returns batting or pitching splits broken down by various categories (e.g., vs LHP/RHP, home/away). Use this for aggregate performance breakdowns rather than pitch-level data.",
+                "input_schema": {
+                    "type": "object",
+                    "properties": {
+                        "player_id": {
+                            "type": "integer",
+                            "description": "The FanGraphs ID associated with the player"
+                        },
+                        "year": {
+                            "type": "integer",
+                            "description": "The season year to get splits for. If omitted, returns career splits."
+                        },
+                        "player_info": {
+                            "type": "boolean",
+                            "description": "Whether to include general player info. Defaults to false."
+                        },
+                        "pitching_splits": {
+                            "type": "boolean",
+                            "description": "Set to true for pitching splits, false for batting splits. Defaults to false."
+                        }
+                    },
+                    "required": ["player_id"]
+                }
             }
         ]
+        self.tool_handlers = {
+            "get_player_id": self.get_player_id,
+            "get_pitcher_statcast": self.get_pitcher_statcast,
+            "get_player_splits": self.get_player_splits
+        }
 
     # get player id
     # 

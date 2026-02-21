@@ -34,7 +34,7 @@ class Client:
     def send_user_query(self, user_query):
         self.add_message("user", user_query)
         message = self.send_message()
-        logging.debug(message)
+        logger.debug(message)
         self.process_response(message)
     
     def build_tool_result_block(self, block, response):
@@ -55,15 +55,10 @@ class Client:
             if block.type == "text":
                 print(block.text)
             if block.type == "tool_use":
-                if block.name == "get_player_id":
-                    logging.debug(block)
-                    response = self.call_get_player_id(block.input)
-                    response_block = self.build_tool_result_block(block, response)
-                    break
+                logger.debug(block)
+                response = self.tools.tool_handlers[block.name](**block.input)
+                response_block = self.build_tool_result_block(block, response)
+                break
         self.add_message("user", response_block)
         response = self.send_message()
         self.process_response(response)
-        
-
-    def call_get_player_id(self, input):
-        return self.tools.get_player_id(input["last_name"], input["first_name"])
