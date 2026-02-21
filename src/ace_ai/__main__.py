@@ -2,7 +2,8 @@ import logging
 from .tools import Tools
 from .client import Client
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
+logging.disable(logging.CRITICAL)
 logger = logging.getLogger(__name__)
 
 def main() -> None:
