@@ -35,7 +35,7 @@ class Client:
         self.add_message("user", user_query)
         message = self.send_message()
         logger.debug(message)
-        self.process_response(message)
+        return self.process_response(message)
     
     def build_tool_result_block(self, block, response):
         return [
@@ -47,13 +47,10 @@ class Client:
         ]
 
     def process_response(self, message):
-        if message.stop_reason != "tool_use":
-            print(message.content[0].text)
-            return
         self.add_message("assistant", message.content)
+        if message.stop_reason != "tool_use":
+            return message.content[0].text
         for block in message.content:
-            if block.type == "text":
-                print(block.text)
             if block.type == "tool_use":
                 logger.debug(block)
                 response = self.tools.tool_handlers[block.name](**block.input)
@@ -61,4 +58,4 @@ class Client:
                 break
         self.add_message("user", response_block)
         response = self.send_message()
-        self.process_response(response)
+        return self.process_response(response)
