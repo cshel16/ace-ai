@@ -9,11 +9,7 @@ dependencies = [
     "pybaseball>=2.2.7",
     "pandas",
     "dotenv",
-    "anthropic",
-    "logging",
-    "fastapi",
-    "uvicorn",
-    "pydantic"
+    "anthropic"
 ]
 
 [tool.setuptools.packages.find]
