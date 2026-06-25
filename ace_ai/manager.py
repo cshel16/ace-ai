@@ -1,4 +1,9 @@
+
+import logging
 from .client import Client
+
+logger = logging.getLogger(__name__)
+
 
 class Manager:
     def __init__(self, client: Client):
@@ -7,11 +12,14 @@ class Manager:
     def _prompt_user(self) -> str:
         return input("> ")
 
-    def _send_to_client(self, user_input) -> str:
-        return self.client.send_user_query(user_input)
+    def _get_model_response(self, prompt) -> str:
+        return self.client.handle_prompt(prompt)
 
     def run(self) -> None:
         print("Welcome to Ace AI! Ask me anything...")
         while True:
-            user_input = self._prompt_user()
-            model_response = self._send_to_client(user_input)
+            prompt = self._prompt_user()
+            response = self._get_model_response(prompt)
+            if not response:
+                logger.exception("Did not receive valid response from client")
+            print(response)
