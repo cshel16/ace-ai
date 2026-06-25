@@ -24,7 +24,7 @@ class Client:
         self.conversation.append(message)
 
 
-    def _send_to_model(self) -> Message | None:
+    def _send_to_model(self):
         response = None
         try:
             response = self.client.messages.create(
@@ -40,9 +40,9 @@ class Client:
     
 
     def _process_response(self, response) -> str | None:
-        content = response["content"]
-        if content["type"] == "text":
-            return content["text"]
+        content = response.content[0]
+        if content.type == "text":
+            return content.text
         else:
             return None
 
