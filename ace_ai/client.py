@@ -23,7 +23,7 @@ class Client:
         }
         self.conversation.append(message)
 
-    def send_message(self):
+    def _send_message(self):
         return self.client.messages.create(
             model="claude-sonnet-4-5-20250929",
             max_tokens=1000,
@@ -57,5 +57,5 @@ class Client:
                 response_block = self.build_tool_result_block(block, response)
                 break
         self.add_message("user", response_block)
-        response = self.send_message()
+        response = self._send_message()
         return self.process_response(response)
