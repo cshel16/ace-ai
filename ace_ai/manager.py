@@ -16,10 +16,10 @@ class Manager:
         return self.client.handle_prompt(prompt)
 
     def run(self) -> None:
-        print("Welcome to Ace AI! Ask me anything...")
+        print("\n\nWelcome to Ace AI! Ask me anything...\n\n\n")
         while True:
             prompt = self._prompt_user()
             response = self._get_model_response(prompt)
             if not response:
                 logger.exception("Did not receive valid response from client")
-            print(response)
+            print(f"\n{response}\n")
