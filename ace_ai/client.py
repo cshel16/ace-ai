@@ -16,7 +16,7 @@ class Client:
         self.conversation = []
 
 
-    def _add_message(self, role, content) -> None:
+    def _add_message_to_convo(self, role, content) -> None:
         message = {
             "role": role,
             "content": content,
@@ -42,7 +42,9 @@ class Client:
     def _process_response(self, response) -> str | None:
         content = response.content[0]
         if content.type == "text":
-            return content.text
+            message = content.text
+            self._add_message_to_convo("assistant", message)
+            return message
         else:
             return None
 
@@ -51,7 +53,7 @@ class Client:
         # called by manager
         # takes the prompt from the user, add to convo, send to model
         # get model response, parse text, send to back to manager
-        self._add_message("user", prompt)
+        self._add_message_to_convo("user", prompt)
         response = self._send_to_model()
         model_prompt = self._process_response(response)
         return model_prompt
